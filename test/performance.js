@@ -5,7 +5,7 @@ var util = require('../lib/util');
 
 describe('tame-search performance', function () {
 
-  var COUNT = 10000;
+  var COUNT = 100000;
 
   this.timeout(COUNT * 10);
 
@@ -23,7 +23,7 @@ describe('tame-search performance', function () {
       
       var possibleSubscriptions = util.getWildcardPermutations(path);
 
-      var subscriptionPath = possibleSubscriptions[random.integer(0, possibleSubscriptions.length)];
+      var subscriptionPath = possibleSubscriptions[random.integer(0, possibleSubscriptions.length - 1)];
 
       //console.log('sub path:::', subscriptionPath);
 

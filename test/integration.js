@@ -155,4 +155,34 @@ describe('tame-search unit', function () {
 
   });
 
+  it('test subscription validation', function (done) {
+
+    var tameSearch = TameSearch.create();
+
+    try{
+
+      tameSearch.subscribe();
+
+    }catch(e){
+      expect(e.toString()).to.be('Error: topic must be a string');
+    }
+
+    try{
+
+      tameSearch.subscribe('/test', 'some arb key');
+    }catch(e){
+      expect(e.toString()).to.be('Error: subscription data must be an object');
+    }
+
+    try{
+
+      tameSearch.subscribe('/test');
+    }catch(e){
+      expect(e.toString()).to.be('Error: subscription data cannot be null');
+    }
+
+    done();
+
+  });
+
 });

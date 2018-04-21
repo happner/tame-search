@@ -4,7 +4,7 @@ tame-search
 premise
 -------
 
-key/value in-memory pub/sub store that allows for a strict wildcard scheme.
+key/value in-memory pub/sub store that allows for a strict wildcard scheme. useful for a searchable subscription store for a pub/sub system. Noteably, the system stores wildcard subscriptions, and is able to match them to incoming queries,
 
 installation
 ------------
@@ -108,6 +108,17 @@ wildcards cannot be in the middle of the subscription string
     // /1/2/*/*/*
     // /1/*/*/*/*
     // /*/*/*/*/*
+
+```
+
+subscription reference data must be an object
+
+```javascript
+
+  tameSearch.subscribe('/test/1/*/3') //will not work
+  tameSearch.subscribe('/test/1/*/3','string value') //will not work
+  //instead do
+  tameSearch.subscribe('/test/1/*/3',{value:'string value'})
 
 ```
 
