@@ -19,7 +19,7 @@ describe('tame-search unit', function () {
 
   it('adds and finds a subscription', function (done) {
 
-    var tameSearch = new TameSearch();
+    var tameSearch = TameSearch.create();
 
     tameSearch.subscribe('/test/2', {test: 'data'});
 
@@ -124,6 +124,32 @@ describe('tame-search unit', function () {
     expect(tameSearch.unsubscribe('/test/*', {filter: {ref: 1}})).to.be(1);
 
     expect(tameSearch.search('/test/2').length).to.be(2);
+
+    done();
+
+  });
+
+  it('adds and finds a subscription with a filter, then removes the middle subscription and does not find it', function (done) {
+
+    var tameSearch = new TameSearch();
+
+    tameSearch.subscribe('/test/*', {ref: 1});
+
+    tameSearch.subscribe('/test/*', {ref: 2});
+
+    tameSearch.subscribe('/test/*', {ref: 3});
+
+    expect(tameSearch.search('/test/2', {filter: {ref: 3}}).length).to.be(1);
+
+    expect(tameSearch.search('/test/2').length).to.be(3);
+
+    expect(tameSearch.unsubscribe('/test/*', {filter: {ref: 2}})).to.be(1);
+
+    expect(tameSearch.search('/test/2').length).to.be(2);
+
+    expect(tameSearch.search('/test/2')[0].ref).to.be(1);
+
+    expect(tameSearch.search('/test/2')[1].ref).to.be(3);
 
     done();
 
