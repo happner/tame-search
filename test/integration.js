@@ -1,7 +1,7 @@
 var expect = require('expect.js');
 var TameSearch = require('..');
 
-describe('tame-search unit', function () {
+describe('tame-search integration', function () {
 
   it('adds a subscription', function (done) {
 
@@ -9,7 +9,7 @@ describe('tame-search unit', function () {
 
     tameSearch.subscribe('/test/1', {test: 'data'});
 
-    expect(tameSearch.subscriptions['/test/1'][0]).to.eql({
+    expect(tameSearch.subscriptions['3']['/test/1'][0]).to.eql({
       test: 'data'
     });
 

@@ -21,6 +21,7 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "fast-clone": "^1.5.3",
+    "hashring": "^3.2.0",
     "lru-cache": "^4.1.2",
     "sift": "^5.1.0"
   },
