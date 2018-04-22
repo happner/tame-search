@@ -60,8 +60,8 @@ module.exports = {
 
       if (options.duplicate) {
         for (var duplicateCount = 0; duplicateCount < options.duplicate; duplicateCount++)
-          paths.push(subscription);
-      } else paths.push(subscription);
+          paths.push('/' + subscription);
+      } else paths.push('/' + subscription);
     }
 
     return paths;

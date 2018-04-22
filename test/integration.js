@@ -1,7 +1,7 @@
 var expect = require('expect.js');
 var TameSearch = require('..');
 
-describe('tame-search unit', function () {
+describe('tame-search integration', function () {
 
   it('adds a subscription', function (done) {
 
@@ -164,8 +164,17 @@ describe('tame-search unit', function () {
       tameSearch.subscribe();
 
     }catch(e){
-      expect(e.toString()).to.be('Error: topic must be a string');
+      expect(e.toString()).to.be('Error: topic must be a string and must start with /');
     }
+
+    try{
+
+      tameSearch.subscribe('test/path');
+
+    }catch(e){
+      expect(e.toString()).to.be('Error: topic must be a string and must start with /');
+    }
+
 
     try{
 

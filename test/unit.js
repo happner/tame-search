@@ -51,17 +51,15 @@ describe('tame-search unit', function () {
 
     var tameSearch = new TameSearch({permutationCache:10000});
 
-    var permutations = [
-      '/a/really/long/test/path/with/no/wildcards',
-      '/*/*/*/*/*/*/*/*',
-      '/a/*/*/*/*/*/*/*',
-      '/a/really/*/*/*/*/*/*',
-      '/a/really/long/*/*/*/*/*',
-      '/a/really/long/test/*/*/*/*',
-      '/a/really/long/test/path/*/*/*',
+    var permutations = [ '/a/really/long/test/path/with/no/wildcards',
+      '/a/really/long/test/path/with/no/*',
       '/a/really/long/test/path/with/*/*',
-      '/a/really/long/test/path/with/no/*'
-    ];
+      '/a/really/long/test/path/*/*/*',
+      '/a/really/long/test/*/*/*/*',
+      '/a/really/long/*/*/*/*/*',
+      '/a/really/*/*/*/*/*/*',
+      '/a/*/*/*/*/*/*/*',
+      '/*/*/*/*/*/*/*/*' ];
 
     var returnedPermutations = tameSearch.getWildcardPermutations('/a/really/long/test/path/with/no/wildcards');
 

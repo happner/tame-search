@@ -9,6 +9,22 @@ describe('tame-search performance', function () {
 
   this.timeout(COUNT * 10);
 
+  function verifyResults(searchResults, randomPaths){
+
+    console.log('verifying...');
+
+    var ok = true;
+
+    randomPaths.every(function(path){
+
+      if (searchResults[path] == 0) ok = false;
+
+      return ok;
+    });
+
+    console.log('verified...');
+  }
+
   it('creates ' + COUNT + ' random paths, and randomly selects a wildcard option for each path, subscribes, then loops through the paths and searches', function (done) {
 
     var subscriptions = [];
@@ -25,8 +41,6 @@ describe('tame-search performance', function () {
 
       var subscriptionPath = possibleSubscriptions[random.integer(0, possibleSubscriptions.length - 1)];
 
-      //console.log('sub path:::', subscriptionPath);
-
       subscriptions.push(subscriptionPath);
     });
 
@@ -40,15 +54,18 @@ describe('tame-search performance', function () {
 
     console.log('did ' + COUNT + ' subscriptions in ' + ((Date.now() - startedSubscribing) / 1000).toString() + ' seconds');
 
+    var searchResults = {};
+
     var startedSearching = Date.now();
 
     randomPaths.forEach(function(path){
 
-      if (tameSearch.search(path).length == 0) console.log('search error');
-
+      searchResults[path] = tameSearch.search(path).length;
     });
 
     console.log('did ' + COUNT + ' searches in ' + ((Date.now() - startedSearching) / 1000).toString() + ' seconds');
+
+    verifyResults(searchResults, randomPaths);
 
     done();
   });

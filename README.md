@@ -87,6 +87,14 @@ comparison is done only on paths that have a matching number of / segment divide
 
 ```
 
+the subscription string must start with the "/" character
+
+```javascript
+
+    tameSearch.subscribe('test/1/*/3', {ref:1}); //is invalid
+    tameSearch.subscribe('/test/1/*/3', {ref:1}); //is good
+```
+
 wildcards mean nothing in the search string (for now)
 
 ```
