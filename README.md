@@ -123,10 +123,10 @@ subscription reference data must be an object
 
 ```javascript
 
-  tameSearch.subscribe('/test/1/*/3') //will not work
-  tameSearch.subscribe('/test/1/*/3','string value') //will not work
+  tameSearch.subscribe('/test/1/*/*') //will not work
+  tameSearch.subscribe('/test/1/*/*','string value') //will not work
   //instead do
-  tameSearch.subscribe('/test/1/*/3',{value:'string value'})
+  tameSearch.subscribe('/test/1/*/*',{value:'string value'})
 
 ```
 
