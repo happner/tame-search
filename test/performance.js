@@ -1,7 +1,7 @@
 var expect = require('expect.js');
 var TameSearch = require('..');
 var random = require('./__fixtures/random');
-var util = require('../lib/util');
+var util = require('./__fixtures/util');
 
 describe('tame-search performance', function () {
 
@@ -29,7 +29,7 @@ describe('tame-search performance', function () {
 
     var subscriptions = [];
 
-    var tameSearch = new TameSearch();
+    var tameSearch = new TameSearch({searchCache: 1000, permutationCache: 1000});
 
     console.log('building subscriptions...');
 
@@ -42,6 +42,51 @@ describe('tame-search performance', function () {
       var subscriptionPath = possibleSubscriptions[random.integer(0, possibleSubscriptions.length - 1)];
 
       subscriptions.push(subscriptionPath);
+    });
+
+    console.log('built subscriptions...');
+
+    var startedSubscribing = Date.now();
+
+    subscriptions.forEach(function(subscription, subscriptionInd){
+      tameSearch.subscribe(subscription, {ref:subscriptionInd});
+    });
+
+    console.log('did ' + COUNT + ' subscriptions in ' + ((Date.now() - startedSubscribing) / 1000).toString() + ' seconds');
+
+    var searchResults = {};
+
+    var startedSearching = Date.now();
+
+    randomPaths.forEach(function(path){
+
+      searchResults[path] = tameSearch.search(path).length;
+    });
+
+    console.log('did ' + COUNT + ' searches in ' + ((Date.now() - startedSearching) / 1000).toString() + ' seconds');
+
+    verifyResults(searchResults, randomPaths);
+
+    done();
+  });
+
+  it('creates ' + COUNT + ' random paths, then does sparse wildcard searches, this should be faster than the test preceding it', function (done) {
+
+    var subscriptions = [];
+
+    var tameSearch = new TameSearch();
+
+    console.log('building subscriptions...');
+
+    var randomPaths = random.randomPaths({count:COUNT});
+
+    randomPaths.forEach(function(path){
+
+      var subscriptionPathSegments = path.split('/');
+
+      subscriptionPathSegments[subscriptionPathSegments.length - 1] = '*';
+
+      subscriptions.push(subscriptionPathSegments.join('/'));
     });
 
     console.log('built subscriptions...');

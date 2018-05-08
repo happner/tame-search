@@ -37,7 +37,7 @@ module.exports = {
 
     if (options.count == null) options.count = 10;
 
-    if (options.maxSegments == null) options.maxSegments = 3;
+    if (options.maxSegments == null) options.maxSegments = 5;
 
     if (options.segmentDelimiter == null) options.segmentDelimiter = "/";
 

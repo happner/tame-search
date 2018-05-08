@@ -16,7 +16,7 @@ describe('tame-search unit', function () {
 
   it('tests initialization, defined options', function (done) {
 
-    var tameSearch = new TameSearch({searchCache:10000, permutationCache:10000});
+    var tameSearch = new TameSearch({searchCache: 10000, permutationCache: 10000});
 
     expect(tameSearch.options.searchCache).to.be(10000);
     expect(tameSearch.options.permutationCache).to.be(10000);
@@ -27,7 +27,7 @@ describe('tame-search unit', function () {
 
   it('tests initialization, mixed options', function (done) {
 
-    var tameSearch = new TameSearch({searchCache:10000});
+    var tameSearch = new TameSearch({searchCache: 10000});
 
     expect(tameSearch.options.searchCache).to.be(10000);
     expect(tameSearch.options.permutationCache).to.be(5000);
@@ -38,7 +38,7 @@ describe('tame-search unit', function () {
 
   it('initializes the caches', function (done) {
 
-    var tameSearch = new TameSearch({searchCache:10000});
+    var tameSearch = new TameSearch({searchCache: 10000});
 
     expect(tameSearch.cache.search.max).to.be(10000);
     expect(tameSearch.cache.permutation.max).to.be(5000);
@@ -47,25 +47,145 @@ describe('tame-search unit', function () {
 
   });
 
-  it('tests getting permutations', function (done) {
+  xit('it does a subscription and checks the meta ', function (done) {
 
-    var tameSearch = new TameSearch({permutationCache:10000});
+    var tameSearch = new TameSearch({permutationCache: 1000});
 
-    var permutations = [ '/a/really/long/test/path/with/no/wildcards',
-      '/a/really/long/test/path/with/no/*',
-      '/a/really/long/test/path/with/*/*',
-      '/a/really/long/test/path/*/*/*',
-      '/a/really/long/test/*/*/*/*',
-      '/a/really/long/*/*/*/*/*',
-      '/a/really/*/*/*/*/*/*',
-      '/a/*/*/*/*/*/*/*',
-      '/*/*/*/*/*/*/*/*' ];
+    tameSearch.subscribe('/a/test/*/path/*', {test:'1'});
+    tameSearch.subscribe('/a/*/*/path/*', {test:'2'});
 
-    var returnedPermutations = tameSearch.getWildcardPermutations('/a/really/long/test/path/with/no/wildcards');
+    var meta = tameSearch.subscriptionsMeta[5];
 
-    expect(returnedPermutations).to.eql(permutations);
+    expect(meta.mask.__key).to.be('0+1+1+0+1');
+    expect(meta.mask.__sum).to.be(3);
+    expect(meta.join('')).to.eql('01202');
+
+    expect(meta.combinations).to.eql([
+      [ 0, 1, 0, 0, 0 ],
+      [ 1, 1, 0, 0, 0 ],
+      [ 0, 0, 1, 0, 0 ],
+      [ 1, 0, 1, 0, 0 ],
+      [ 0, 1, 1, 0, 0 ],
+      [ 1, 1, 1, 0, 0 ],
+      [ 0, 1, 0, 1, 0 ],
+      [ 1, 1, 0, 1, 0 ],
+      [ 0, 0, 1, 1, 0 ],
+      [ 1, 0, 1, 1, 0 ],
+      [ 0, 1, 1, 1, 0 ],
+      [ 1, 1, 1, 1, 0 ],
+      [ 0, 0, 0, 0, 1 ],
+      [ 1, 0, 0, 0, 1 ],
+      [ 0, 1, 0, 0, 1 ],
+      [ 1, 1, 0, 0, 1 ],
+      [ 0, 0, 1, 0, 1 ],
+      [ 1, 0, 1, 0, 1 ],
+      [ 0, 1, 1, 0, 1 ],
+      [ 1, 1, 1, 0, 1 ],
+      [ 0, 0, 0, 1, 1 ],
+      [ 1, 0, 0, 1, 1 ],
+      [ 0, 1, 0, 1, 1 ],
+      [ 1, 1, 0, 1, 1 ],
+      [ 0, 0, 1, 1, 1 ],
+      [ 1, 0, 1, 1, 1 ],
+      [ 0, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 1, 1 ] ]);
+
+    tameSearch.unsubscribe('/a/*/*/path/*', {filter:{test:'2'}});
+
+    expect(meta.mask.__key).to.be('0+0+1+0+1');
+    expect(meta.mask.__sum).to.be(2);
+    expect(meta.join('')).to.eql('00101');
+
+    expect(meta.combinations).to.eql([
+      [ 0, 0, 1, 0, 0 ],
+      [ 1, 0, 1, 0, 0 ],
+      [ 0, 1, 1, 0, 0 ],
+      [ 1, 1, 1, 0, 0 ],
+      [ 0, 0, 1, 1, 0 ],
+      [ 1, 0, 1, 1, 0 ],
+      [ 0, 1, 1, 1, 0 ],
+      [ 1, 1, 1, 1, 0 ],
+      [ 0, 0, 0, 0, 1 ],
+      [ 1, 0, 0, 0, 1 ],
+      [ 0, 1, 0, 0, 1 ],
+      [ 1, 1, 0, 0, 1 ],
+      [ 0, 0, 1, 0, 1 ],
+      [ 1, 0, 1, 0, 1 ],
+      [ 0, 1, 1, 0, 1 ],
+      [ 1, 1, 1, 0, 1 ],
+      [ 0, 0, 0, 1, 1 ],
+      [ 1, 0, 0, 1, 1 ],
+      [ 0, 1, 0, 1, 1 ],
+      [ 1, 1, 0, 1, 1 ],
+      [ 0, 0, 1, 1, 1 ],
+      [ 1, 0, 1, 1, 1 ],
+      [ 0, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 1, 1 ] ]);
+
+    tameSearch.unsubscribe('/a/test/*/path/*', {filter:{test:'1'}});
+
+    expect(meta.mask.__key).to.be('0+0+0+0+0');
+    expect(meta.mask.__sum).to.be(0);
+    expect(meta.join('')).to.eql('00000');
+
+    expect(meta.combinations).to.eql([ [ 0, 0, 0, 0, 0 ],
+      [ 1, 0, 0, 0, 0 ],
+      [ 0, 1, 0, 0, 0 ],
+      [ 1, 1, 0, 0, 0 ],
+      [ 0, 0, 1, 0, 0 ],
+      [ 1, 0, 1, 0, 0 ],
+      [ 0, 1, 1, 0, 0 ],
+      [ 1, 1, 1, 0, 0 ],
+      [ 0, 0, 0, 1, 0 ],
+      [ 1, 0, 0, 1, 0 ],
+      [ 0, 1, 0, 1, 0 ],
+      [ 1, 1, 0, 1, 0 ],
+      [ 0, 0, 1, 1, 0 ],
+      [ 1, 0, 1, 1, 0 ],
+      [ 0, 1, 1, 1, 0 ],
+      [ 1, 1, 1, 1, 0 ],
+      [ 0, 0, 0, 0, 1 ],
+      [ 1, 0, 0, 0, 1 ],
+      [ 0, 1, 0, 0, 1 ],
+      [ 1, 1, 0, 0, 1 ],
+      [ 0, 0, 1, 0, 1 ],
+      [ 1, 0, 1, 0, 1 ],
+      [ 0, 1, 1, 0, 1 ],
+      [ 1, 1, 1, 0, 1 ],
+      [ 0, 0, 0, 1, 1 ],
+      [ 1, 0, 0, 1, 1 ],
+      [ 0, 1, 0, 1, 1 ],
+      [ 1, 1, 0, 1, 1 ],
+      [ 0, 0, 1, 1, 1 ],
+      [ 1, 0, 1, 1, 1 ],
+      [ 0, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 1, 1 ] ]);
 
     done();
+  });
 
+  it('tests getting wildcard combinations', function(done){
+
+    var tameSearch = new TameSearch({permutationCache: 1000});
+
+    expect(tameSearch.getWildcardCombinations(['my','test','path','1'], '/my/test/path/1')).to.eql([]);
+
+    tameSearch.subscribe('/my/test/path/*', {test:1});
+
+    expect(tameSearch.getWildcardCombinations(['my','test','path','1'], '/my/test/path/1')).to.eql([
+      '/my/test/path/*']);
+
+    tameSearch.subscribe('/*/test/path/1', {test:1});
+
+    expect(tameSearch.getWildcardCombinations(['my','test','path','1'], '/my/test/path/1')).to.eql([
+      '/*/test/path/1',
+      '/my/test/path/*']);
+
+    tameSearch.unsubscribe('/*/test/path/1');
+
+    expect(tameSearch.getWildcardCombinations(['my','test','path','1'], '/my/test/path/1')).to.eql(['/my/test/path/*']);
+
+    done();
   })
+
 });

@@ -9,7 +9,7 @@ describe('tame-search integration', function () {
 
     tameSearch.subscribe('/test/1', {test: 'data'});
 
-    expect(tameSearch.subscriptions['/test/1'][0]).to.eql({
+    expect(tameSearch.subscriptions[2]['/test/1'][0]).to.eql({
       test: 'data'
     });
 
@@ -46,6 +46,8 @@ describe('tame-search integration', function () {
     var tameSearch = new TameSearch();
 
     tameSearch.subscribe('/test/2', {test: 'data'});
+
+    console.log(tameSearch.search('/test1/2'));
 
     expect(tameSearch.search('/test1/2').length).to.be(0);
 
