@@ -103,19 +103,23 @@ wildcards mean nothing in the search string (for now)
 
 ```
 
-wildcards cannot be in the middle of the subscription string
+wildcards can be positioned anywhere on the subscription string, previous versions only allowed for trailing wildcards
 
 ```javascript
 
     tameSearch.subscribe('/test/1/*/3', {ref:1}); //will never get hit, valid subscriptions must always have contiguous wildcard segments
 
-    //ie: valid subscriptions for search path /1/2/3/4/5 are:
+    //ie: valid subscriptions which will be found for search path /1/2/3/4/5 are:
     // /1/2/3/4/5
     // /1/2/3/4/*
     // /1/2/3/*/*
     // /1/2/*/*/*
     // /1/*/*/*/*
     // /*/*/*/*/*
+    // /1/*/*/4/5
+    // /1/*/*/*/5
+    // /*/2/3/4/*
+    // etc.
 
 ```
 
