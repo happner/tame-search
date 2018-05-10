@@ -5,9 +5,10 @@ var util = require('./__fixtures/util');
 
 describe('tame-search performance', function () {
 
-  var COUNT = 100000;
+  var SUBSCRIPTION_COUNT = 10000;
+  var SEARCH_COUNT = 100000;
 
-  this.timeout(COUNT * 10);
+  this.timeout(SUBSCRIPTION_COUNT * 10);
 
   function verifyResults(searchResults, randomPaths){
 
@@ -25,7 +26,7 @@ describe('tame-search performance', function () {
     console.log('verified...');
   }
 
-  it('creates ' + COUNT + ' random paths, and randomly selects a wildcard option for each path, subscribes, then loops through the paths and searches', function (done) {
+  it('creates ' + SUBSCRIPTION_COUNT + ' random paths, and randomly selects a wildcard option for each path, subscribes, then loops through the paths and searches ' + SEARCH_COUNT + ' times', function (done) {
 
     var subscriptions = [];
 
@@ -33,7 +34,7 @@ describe('tame-search performance', function () {
 
     console.log('building subscriptions...');
 
-    var randomPaths = random.randomPaths({count:COUNT});
+    var randomPaths = random.randomPaths({count:SUBSCRIPTION_COUNT});
 
     randomPaths.forEach(function(path){
       
@@ -52,7 +53,7 @@ describe('tame-search performance', function () {
       tameSearch.subscribe(subscription, {ref:subscriptionInd});
     });
 
-    console.log('did ' + COUNT + ' subscriptions in ' + ((Date.now() - startedSubscribing) / 1000).toString() + ' seconds');
+    console.log('did ' + SUBSCRIPTION_COUNT + ' subscriptions in ' + ((Date.now() - startedSubscribing) / 1000).toString() + ' seconds');
 
     var searchResults = {};
 
@@ -63,14 +64,14 @@ describe('tame-search performance', function () {
       searchResults[path] = tameSearch.search(path).length;
     });
 
-    console.log('did ' + COUNT + ' searches in ' + ((Date.now() - startedSearching) / 1000).toString() + ' seconds');
+    console.log('did ' + SEARCH_COUNT + ' searches in ' + ((Date.now() - startedSearching) / 1000).toString() + ' seconds');
 
     verifyResults(searchResults, randomPaths);
 
     done();
   });
 
-  it('creates ' + COUNT + ' random paths, then does sparse wildcard searches, this should be faster than the test preceding it', function (done) {
+  it('creates ' + SUBSCRIPTION_COUNT + ' random paths, then does sparse wildcard searches ' + SEARCH_COUNT + ' times, this should be faster than the test preceding it', function (done) {
 
     var subscriptions = [];
 
@@ -78,7 +79,7 @@ describe('tame-search performance', function () {
 
     console.log('building subscriptions...');
 
-    var randomPaths = random.randomPaths({count:COUNT});
+    var randomPaths = random.randomPaths({count:SUBSCRIPTION_COUNT});
 
     randomPaths.forEach(function(path){
 
@@ -97,7 +98,7 @@ describe('tame-search performance', function () {
       tameSearch.subscribe(subscription, {ref:subscriptionInd});
     });
 
-    console.log('did ' + COUNT + ' subscriptions in ' + ((Date.now() - startedSubscribing) / 1000).toString() + ' seconds');
+    console.log('did ' + SUBSCRIPTION_COUNT + ' subscriptions in ' + ((Date.now() - startedSubscribing) / 1000).toString() + ' seconds');
 
     var searchResults = {};
 
@@ -108,7 +109,7 @@ describe('tame-search performance', function () {
       searchResults[path] = tameSearch.search(path).length;
     });
 
-    console.log('did ' + COUNT + ' searches in ' + ((Date.now() - startedSearching) / 1000).toString() + ' seconds');
+    console.log('did ' + SEARCH_COUNT + ' searches in ' + ((Date.now() - startedSearching) / 1000).toString() + ' seconds');
 
     verifyResults(searchResults, randomPaths);
 

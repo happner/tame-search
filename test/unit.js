@@ -186,6 +186,28 @@ describe('tame-search unit', function () {
     expect(tameSearch.getWildcardCombinations(['my','test','path','1'], '/my/test/path/1')).to.eql(['/my/test/path/*']);
 
     done();
-  })
+  });
+
+  it('ensures the meta indexes are being pruned and updated as necessary', function(done){
+
+    var tameSearch = new TameSearch({permutationCache: 1000});
+
+
+    tameSearch.subscribe('/my/test/path/*', {test:1});
+    tameSearch.subscribe('/my/test/path/*', {test:2});
+
+    expect(tameSearch.subscriptionsMeta[4]['0001']).to.be(2);
+
+    tameSearch.unsubscribe('/my/test/path/*', {filter:{test:1}});
+
+    expect(tameSearch.subscriptionsMeta[4]['0001']).to.be(1);
+
+    tameSearch.unsubscribe('/my/test/path/*', {filter:{test:2}});
+
+    expect(tameSearch.subscriptionsMeta[4]['0001']).to.be(undefined);
+
+    done();
+
+  });
 
 });
