@@ -273,6 +273,37 @@ describe('tame-search integration', function () {
     done();
   });
 
+  it('tests the unsubscribeAll method 2', function (done) {
+
+    var tameSearch = new TameSearch();
+
+    tameSearch.subscribe('/test/*', {ref: 1, topLevelRef:2});
+
+    tameSearch.subscribe('/test/*', {ref: 2, topLevelRef:1});
+
+    tameSearch.subscribe('/test/1', {ref: 3, topLevelRef:2});
+
+    tameSearch.subscribe('/test/*/*', {ref: 4, topLevelRef:1});
+
+    expect(tameSearch.search('/test/2', {filter: {topLevelRef: 2}}).length).to.be(1);
+
+    expect(tameSearch.unsubscribeAll({filter: {topLevelRef:2}})).to.be(2);
+
+    expect(tameSearch.search('/test/2', {filter: {topLevelRef: 2}}).length).to.be(0);
+
+    expect(tameSearch.search('/test/2', {filter: {topLevelRef: 1}}).length).to.be(1);
+
+    expect(tameSearch.search('/test/2/1', {filter: {topLevelRef: 1}}).length).to.be(1);
+
+    expect(tameSearch.unsubscribeAll({filter: {topLevelRef:1}, returnRemoved:true})).to.eql([{ref: 2, topLevelRef:1}, {ref: 4, topLevelRef:1}]);
+
+    expect(tameSearch.search('/test/2', {filter: {topLevelRef: 1}}).length).to.be(0);
+
+    expect(tameSearch.search('/test/2/1', {filter: {topLevelRef: 1}}).length).to.be(0);
+
+    done();
+  });
+
   it('tests the searchAll method', function (done) {
 
     var tameSearch = new TameSearch();
@@ -294,6 +325,21 @@ describe('tame-search integration', function () {
     expect(tameSearch.searchAll({filter: {topLevelRef: 2}}).length).to.be(4);
 
     expect(tameSearch.searchAll({filter: {topLevelRef: 1}}).length).to.be(3);
+
+    done();
+  });
+
+  it('tests the searchAll method 2', function (done) {
+
+    var tameSearch = new TameSearch();
+
+    tameSearch.subscribe('/test/*', {ref: 1, topLevelRef:2});
+
+    tameSearch.subscribe('/test/1', {ref: 2, topLevelRef:1});
+
+    expect(tameSearch.searchAll({filter: {topLevelRef: 2}}).length).to.be(1);
+
+    expect(tameSearch.searchAll({filter: {topLevelRef: 1}}).length).to.be(1);
 
     done();
   });
