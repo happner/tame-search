@@ -4,7 +4,7 @@ tame-search
 premise
 -------
 
-key/value in-memory pub/sub store that allows for a strict wildcard scheme. useful for a searchable subscription store for a pub/sub system. Noteably, the system stores wildcard subscriptions, and is able to match them to incoming queries,
+key/value in-memory pub/sub store that allows for a strict wildcard scheme. useful for a searchable subscription store for a pub/sub system. Essentially the system stores wildcard subscriptions, and is able to match them to incoming queries,
 
 installation
 ------------
@@ -154,20 +154,27 @@ tameSearch.unsubscribeAll({filter:{topLevelRef:1}, returnRemoved:true})
 rules / caveats
 ---------------
 
+NB, NB: a leading / is ignored when subscribing, unsubscribing and searching:
+
+```javascript
+
+    tameSearch.subscribe('test/1/*/3', {ref:1});
+    tameSearch.subscribe('/test/1/*/3', {ref:2});
+
+    tameSearch.search('/test/1/*/3')
+    //returns:
+    // [
+    //   {ref:1},
+    //   {ref:2}
+    // ]
+```
+
 comparison is done only on paths that have a matching number of / segment dividers, ie:
 
 ```javascript
 
     tameSearch.search('/test/1'); //will not return subscriptions like /test/*/*, only test/1 or test/*
 
-```
-
-the subscription string must start with the "/" character
-
-```javascript
-
-    tameSearch.subscribe('test/1/*/3', {ref:1}); //is invalid
-    tameSearch.subscribe('/test/1/*/3', {ref:1}); //is good
 ```
 
 wildcards mean nothing in the search string (for now)

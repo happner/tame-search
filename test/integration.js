@@ -29,6 +29,49 @@ describe('tame-search integration', function () {
 
   });
 
+  it('adds and finds a subscription without a leading /', function (done) {
+
+    var tameSearch = TameSearch.create();
+
+    tameSearch.subscribe('test/2', {test: 'data'});
+
+    expect(tameSearch.search('test/2')[0].test).to.be('data');
+
+    done();
+
+  });
+
+  it('adds and finds and removes subscriptions without a leading /', function (done) {
+
+    var tameSearch = TameSearch.create();
+
+    tameSearch.subscribe('test/2', {test: 'data'});
+
+    tameSearch.subscribe('/test/2', {test: 'data1'});
+
+    expect(tameSearch.search('test/2')).to.eql([{test: 'data'}, {test: 'data1'}]);
+
+    expect(tameSearch.unsubscribe('test/2', {returnRemoved:true})).to.eql([{test: 'data'}, {test: 'data1'}]);
+
+    done();
+
+  });
+
+  it('adds and finds and removes subscriptions with a leading /', function (done) {
+
+    var tameSearch = TameSearch.create();
+
+    tameSearch.subscribe('test/2', {test: 'data'});
+
+    tameSearch.subscribe('/test/2', {test: 'data1'});
+
+    expect(tameSearch.search('/test/2')).to.eql([{test: 'data'}, {test: 'data1'}]);
+
+    expect(tameSearch.unsubscribe('/test/2', {returnRemoved:true})).to.eql([{test: 'data'}, {test: 'data1'}]);
+
+    done();
+  });
+
   it('adds and finds a wildcard subscription', function (done) {
 
     var tameSearch = new TameSearch();
@@ -264,7 +307,7 @@ describe('tame-search integration', function () {
       tameSearch.subscribe();
 
     }catch(e){
-      expect(e.toString()).to.be('Error: topic must be a string and must start with /');
+      expect(e.toString()).to.be('Error: topic must be a string');
     }
 
     try{
@@ -272,7 +315,7 @@ describe('tame-search integration', function () {
       tameSearch.subscribe('test/path');
 
     }catch(e){
-      expect(e.toString()).to.be('Error: topic must be a string and must start with /');
+      expect(e.toString()).to.be('Error: subscription data cannot be null');
     }
 
 
@@ -291,7 +334,5 @@ describe('tame-search integration', function () {
     }
 
     done();
-
   });
-
 });
