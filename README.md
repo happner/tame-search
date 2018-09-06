@@ -76,6 +76,42 @@ example
     */
 ```
 
+extra subscribe options
+--------------------
+
+__subscribe to any topic__
+*it is possible to subscribe to any topic, using the subscribeAny method*
+```javascript
+
+var tameSearch = new TameSearch();
+
+tameSearch.subscribeAny({ref: 1, topLevelRef:2});
+
+tameSearch.subscribeAny({ref: 2, topLevelRef:1});
+
+tameSearch.subscribe('/test/1', {ref: 3, topLevelRef:1});
+
+tameSearch.subscribe('/test/2', {ref: 4, topLevelRef:2});
+
+tameSearch.search('/test/1', {filter: {topLevelRef: 1}});
+//returns:
+// [
+//   {ref: 3, topLevelRef:1},
+//   {ref: 2, topLevelRef:1} //NB: notes how this is included with all search results
+// ]
+
+//to remove an any subscribe you can use the unsubscribeAny method:
+tameSearch.unsubscribeAny({filter:{topLevelRef:1}});
+
+tameSearch.search('/test/1', {filter: {topLevelRef: 1}});
+//now returns:
+// [
+//   {ref: 3, topLevelRef:1}
+// ]
+
+```
+
+
 extra search options
 --------------------
 
@@ -167,6 +203,55 @@ NB, NB: a leading / is ignored when subscribing, unsubscribing and searching:
     //   {ref:1},
     //   {ref:2}
     // ]
+```
+
+difference between unsubscribeAny and unsubscribeAll
+*This could be confusing: unsubscribeAny removes specifically "any" subscriptions and ignores topic based ones, unsubscribeAll will remove topic and "any" type subscriptions*
+
+```javascript
+
+var tameSearch = new TameSearch();
+
+tameSearch.subscribeAny({ref: 1, topLevelRef:2});
+
+tameSearch.subscribeAny({ref: 5, topLevelRef:2});
+
+tameSearch.subscribeAny({ref: 2, topLevelRef:1});
+
+tameSearch.subscribe('/test/1', {ref: 3, topLevelRef:1});
+
+tameSearch.subscribe('/test/2', {ref: 4, topLevelRef:2});
+
+tameSearch.search('/test/1', {filter: {topLevelRef: 1}});
+//returns:
+// [
+//   {ref: 3, topLevelRef:1},
+//   {ref: 2, topLevelRef:1} //NB: notes how this is included with all search results
+// ]
+
+tameSearch.unsubscribeAny({filter:{topLevelRef:1}});
+
+tameSearch.search('/test/1', {filter: {topLevelRef: 1}});
+//now returns:
+// [
+//   {ref: 3, topLevelRef:1}
+// ]
+
+tameSearch.search('/test/2', {filter: {topLevelRef: 2}});
+//returns:
+// [
+//   {ref: 1, topLevelRef:2},
+//   {ref: 5, topLevelRef:2},
+//   {ref: 4, topLevelRef:2}
+// ]
+
+//NB: notice that the unsubscribeAll method removes both "any" and topic type subscriptions
+tameSearch.unsubscribeAll({filter:{topLevelRef:2}});
+
+tameSearch.search('/test/2', {filter: {topLevelRef: 2}});
+//now returns:
+// []  
+
 ```
 
 comparison is done only on paths that have a matching number of / segment dividers, ie:

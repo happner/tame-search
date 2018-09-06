@@ -256,6 +256,8 @@ describe('tame-search integration', function () {
 
     expect(tameSearch.search('/test/2', {filter: {topLevelRef: 2}}).length).to.be(2);
 
+    //console.log('HUH:::',tameSearch.unsubscribeAll({filter: {topLevelRef:2}, returnRemoved:true}));
+
     expect(tameSearch.unsubscribeAll({filter: {topLevelRef:2}})).to.be(2);
 
     expect(tameSearch.search('/test/2', {filter: {topLevelRef: 2}}).length).to.be(0);
@@ -340,6 +342,51 @@ describe('tame-search integration', function () {
     expect(tameSearch.searchAll({filter: {topLevelRef: 2}}).length).to.be(1);
 
     expect(tameSearch.searchAll({filter: {topLevelRef: 1}}).length).to.be(1);
+
+    done();
+  });
+
+  it('tests the subscribeAny method', function (done) {
+
+    var tameSearch = new TameSearch();
+
+    tameSearch.subscribeAny({ref: 1, topLevelRef:2});
+
+    tameSearch.subscribeAny({ref: 2, topLevelRef:1});
+
+    tameSearch.subscribe('/test/1', {ref: 3, topLevelRef:1});
+
+    tameSearch.subscribe('/test/2', {ref: 4, topLevelRef:2});
+
+    expect(tameSearch.search('/test/1', {filter: {topLevelRef: 1}}).length).to.be(2);
+
+    expect(tameSearch.search('/test/1').length).to.be(3);
+
+    expect(tameSearch.searchAll({filter: {topLevelRef: 1}}).length).to.be(2);
+
+    expect(tameSearch.searchAll().length).to.be(4);
+
+    done();
+  });
+
+  it('tests the unsubscribeAny method', function (done) {
+
+    var tameSearch = new TameSearch();
+
+    tameSearch.subscribeAny({ref: 1, topLevelRef:2});
+    tameSearch.subscribeAny({ref: 2, topLevelRef:1});
+    tameSearch.subscribeAny({ref: 3, topLevelRef:1});
+    tameSearch.subscribe('/test/1', {ref: 3, topLevelRef:1});
+    expect(tameSearch.search('/test/1').length).to.be(4);
+
+    tameSearch.unsubscribeAny({filter:{topLevelRef:1}});
+    expect(tameSearch.search('/test/1').length).to.be(2);
+
+    tameSearch.unsubscribeAll({filter:{topLevelRef:2}});
+    expect(tameSearch.search('/test/1').length).to.be(1);
+
+    tameSearch.unsubscribeAll({filter:{topLevelRef:1}});
+    expect(tameSearch.search('/test/1').length).to.be(0);
 
     done();
   });
