@@ -47,123 +47,6 @@ describe('tame-search unit', function () {
 
   });
 
-  xit('it does a subscription and checks the meta ', function (done) {
-
-    var tameSearch = new TameSearch({permutationCache: 1000});
-
-    tameSearch.subscribe('/a/test/*/path/*', {test:'1'});
-    tameSearch.subscribe('/a/*/*/path/*', {test:'2'});
-
-    var meta = tameSearch.subscriptionsMeta[5];
-
-    expect(meta.mask.__key).to.be('0+1+1+0+1');
-    expect(meta.mask.__sum).to.be(3);
-    expect(meta.join('')).to.eql('01202');
-
-    expect(meta.combinations).to.eql([
-      [ 0, 1, 0, 0, 0 ],
-      [ 1, 1, 0, 0, 0 ],
-      [ 0, 0, 1, 0, 0 ],
-      [ 1, 0, 1, 0, 0 ],
-      [ 0, 1, 1, 0, 0 ],
-      [ 1, 1, 1, 0, 0 ],
-      [ 0, 1, 0, 1, 0 ],
-      [ 1, 1, 0, 1, 0 ],
-      [ 0, 0, 1, 1, 0 ],
-      [ 1, 0, 1, 1, 0 ],
-      [ 0, 1, 1, 1, 0 ],
-      [ 1, 1, 1, 1, 0 ],
-      [ 0, 0, 0, 0, 1 ],
-      [ 1, 0, 0, 0, 1 ],
-      [ 0, 1, 0, 0, 1 ],
-      [ 1, 1, 0, 0, 1 ],
-      [ 0, 0, 1, 0, 1 ],
-      [ 1, 0, 1, 0, 1 ],
-      [ 0, 1, 1, 0, 1 ],
-      [ 1, 1, 1, 0, 1 ],
-      [ 0, 0, 0, 1, 1 ],
-      [ 1, 0, 0, 1, 1 ],
-      [ 0, 1, 0, 1, 1 ],
-      [ 1, 1, 0, 1, 1 ],
-      [ 0, 0, 1, 1, 1 ],
-      [ 1, 0, 1, 1, 1 ],
-      [ 0, 1, 1, 1, 1 ],
-      [ 1, 1, 1, 1, 1 ] ]);
-
-    tameSearch.unsubscribe('/a/*/*/path/*', {filter:{test:'2'}});
-
-    expect(meta.mask.__key).to.be('0+0+1+0+1');
-    expect(meta.mask.__sum).to.be(2);
-    expect(meta.join('')).to.eql('00101');
-
-    expect(meta.combinations).to.eql([
-      [ 0, 0, 1, 0, 0 ],
-      [ 1, 0, 1, 0, 0 ],
-      [ 0, 1, 1, 0, 0 ],
-      [ 1, 1, 1, 0, 0 ],
-      [ 0, 0, 1, 1, 0 ],
-      [ 1, 0, 1, 1, 0 ],
-      [ 0, 1, 1, 1, 0 ],
-      [ 1, 1, 1, 1, 0 ],
-      [ 0, 0, 0, 0, 1 ],
-      [ 1, 0, 0, 0, 1 ],
-      [ 0, 1, 0, 0, 1 ],
-      [ 1, 1, 0, 0, 1 ],
-      [ 0, 0, 1, 0, 1 ],
-      [ 1, 0, 1, 0, 1 ],
-      [ 0, 1, 1, 0, 1 ],
-      [ 1, 1, 1, 0, 1 ],
-      [ 0, 0, 0, 1, 1 ],
-      [ 1, 0, 0, 1, 1 ],
-      [ 0, 1, 0, 1, 1 ],
-      [ 1, 1, 0, 1, 1 ],
-      [ 0, 0, 1, 1, 1 ],
-      [ 1, 0, 1, 1, 1 ],
-      [ 0, 1, 1, 1, 1 ],
-      [ 1, 1, 1, 1, 1 ] ]);
-
-    tameSearch.unsubscribe('/a/test/*/path/*', {filter:{test:'1'}});
-
-    expect(meta.mask.__key).to.be('0+0+0+0+0');
-    expect(meta.mask.__sum).to.be(0);
-    expect(meta.join('')).to.eql('00000');
-
-    expect(meta.combinations).to.eql([ [ 0, 0, 0, 0, 0 ],
-      [ 1, 0, 0, 0, 0 ],
-      [ 0, 1, 0, 0, 0 ],
-      [ 1, 1, 0, 0, 0 ],
-      [ 0, 0, 1, 0, 0 ],
-      [ 1, 0, 1, 0, 0 ],
-      [ 0, 1, 1, 0, 0 ],
-      [ 1, 1, 1, 0, 0 ],
-      [ 0, 0, 0, 1, 0 ],
-      [ 1, 0, 0, 1, 0 ],
-      [ 0, 1, 0, 1, 0 ],
-      [ 1, 1, 0, 1, 0 ],
-      [ 0, 0, 1, 1, 0 ],
-      [ 1, 0, 1, 1, 0 ],
-      [ 0, 1, 1, 1, 0 ],
-      [ 1, 1, 1, 1, 0 ],
-      [ 0, 0, 0, 0, 1 ],
-      [ 1, 0, 0, 0, 1 ],
-      [ 0, 1, 0, 0, 1 ],
-      [ 1, 1, 0, 0, 1 ],
-      [ 0, 0, 1, 0, 1 ],
-      [ 1, 0, 1, 0, 1 ],
-      [ 0, 1, 1, 0, 1 ],
-      [ 1, 1, 1, 0, 1 ],
-      [ 0, 0, 0, 1, 1 ],
-      [ 1, 0, 0, 1, 1 ],
-      [ 0, 1, 0, 1, 1 ],
-      [ 1, 1, 0, 1, 1 ],
-      [ 0, 0, 1, 1, 1 ],
-      [ 1, 0, 1, 1, 1 ],
-      [ 0, 1, 1, 1, 1 ],
-      [ 1, 1, 1, 1, 1 ] ]);
-
-    done();
-  });
-
   it('tests getting wildcard combinations', function(done){
 
     var tameSearch = new TameSearch({permutationCache: 1000});
@@ -192,7 +75,6 @@ describe('tame-search unit', function () {
 
     var tameSearch = new TameSearch({permutationCache: 1000});
 
-
     tameSearch.subscribe('/my/test/path/*', {test:1});
     tameSearch.subscribe('/my/test/path/*', {test:2});
 
@@ -204,10 +86,19 @@ describe('tame-search unit', function () {
 
     tameSearch.unsubscribe('/my/test/path/*', {filter:{test:2}});
 
-    expect(tameSearch.subscriptionsMeta[4]['0001']).to.be(undefined);
+    expect(tameSearch.subscriptionsMeta[4]).to.be(undefined);
 
     done();
-
   });
 
+  it('tests the getAllTopics function', function(done){
+    var tameSearch = new TameSearch({permutationCache: 1000});
+
+    tameSearch.subscribe('/my/test/path/*', {test:1});
+    tameSearch.subscribe('/my/test/path/*', {test:2});
+    tameSearch.subscribe('/my/test/*/*', {test:3});
+
+    expect(tameSearch.getAllTopics().sort()).to.eql(['/my/test/*/*', '/my/test/path/*']);
+    done();
+  });
 });

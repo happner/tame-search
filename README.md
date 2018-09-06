@@ -76,8 +76,83 @@ example
     */
 ```
 
-rules
-------
+extra search options
+--------------------
+
+__search all items__
+*as opposed to the regular search it is possible to find all matching subscriptions without using the path as the filter, but rather using the filter option, this will return all items that match the filter, regardless of their subscription path*
+```javascript
+
+var tameSearch = new TameSearch();
+
+tameSearch.subscribe('/test/*', {ref: 1, topLevelRef:2});
+
+tameSearch.subscribe('/test/*', {ref: 2, topLevelRef:1});
+
+tameSearch.subscribe('/test/*', {ref: 3, topLevelRef:2});
+
+tameSearch.subscribe('/test/*/*', {ref: 4, topLevelRef:1});
+
+tameSearch.subscribe('/blah/*/*', {ref: 5, topLevelRef:1});
+
+tameSearch.subscribe('/etc/*/*', {ref: 6, topLevelRef:2});
+
+tameSearch.subscribe('/etc/*/*', {ref: 7, topLevelRef:2});
+
+tameSearch.searchAll({filter: {topLevelRef: 2}})
+//returns:
+// [
+//   {ref: 1, topLevelRef:2},
+//   {ref: 3, topLevelRef:2},
+//   {ref: 6, topLevelRef:2},
+//   {ref: 7, topLevelRef:2}
+// ]
+```
+
+extra unsubscribe options
+-------------------------
+
+__unsubscribe with returnRemoved:__
+*by default unsubscribe just returns the count of items removed from the subscriptions, add the returnRemoved:true option to return items removed from the subscription list*
+```javascript
+
+var tameSearch = new TameSearch();
+
+tameSearch.subscribe('/test/*', {ref: 1});
+
+tameSearch.subscribe('/test/*', {ref: 2});
+
+tameSearch.subscribe('/test/*', {ref: 3});
+
+tameSearch.search('/test/2', {filter: {ref: 3}});
+
+// returns:
+// [{ref: 1}]
+
+tameSearch.unsubscribe('/test/*', {filter: {ref: 1}, returnRemoved:true});
+// returns:
+// [{ref: 1}]
+//instead of 1
+```
+
+__unsubscribe from all paths:__
+*you can unsubscribe from all paths, using a filter*
+```javascript
+var tameSearch = new TameSearch();
+
+tameSearch.subscribe('/test/*', {ref: 1, topLevelRef:1});
+
+tameSearch.subscribe('/test/*/*', {ref: 2, topLevelRef:1});
+
+tameSearch.subscribe('/test/*/*/*', {ref: 3, topLevelRef:2});
+
+tameSearch.unsubscribeAll({filter:{topLevelRef:1}, returnRemoved:true})
+// returns:
+// [{ref: 1, topLevelRef:1}, {ref: 2, topLevelRef:1}]
+```
+
+rules / caveats
+---------------
 
 comparison is done only on paths that have a matching number of / segment dividers, ie:
 
@@ -133,4 +208,3 @@ subscription reference data must be an object
   tameSearch.subscribe('/test/1/*/*',{value:'string value'})
 
 ```
-

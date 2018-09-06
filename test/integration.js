@@ -47,8 +47,6 @@ describe('tame-search integration', function () {
 
     tameSearch.subscribe('/test/2', {test: 'data'});
 
-    console.log(tameSearch.search('/test1/2'));
-
     expect(tameSearch.search('/test1/2').length).to.be(0);
 
     done();
@@ -109,6 +107,28 @@ describe('tame-search integration', function () {
 
   });
 
+  it('adds multiple and finds a subscription with a filter, then removes the subscriptions without a filter and does not find them, with returnRemoved:true', function (done) {
+
+    var tameSearch = new TameSearch();
+
+    tameSearch.subscribe('/test/*', {ref: 1});
+
+    tameSearch.subscribe('/test/*', {ref: 2});
+
+    tameSearch.subscribe('/test/*', {ref: 3});
+
+    expect(tameSearch.search('/test/2', {filter: {ref: 3}}).length).to.be(1);
+
+    expect(tameSearch.search('/test/2').length).to.be(3);
+
+    expect(tameSearch.unsubscribe('/test/*', {returnRemoved:true})).to.eql([ { ref: 1 }, { ref: 2 }, { ref: 3 } ]);
+
+    expect(tameSearch.search('/test/2').length).to.be(0);
+
+    done();
+
+  });
+
   it('adds and finds a subscription with a filter, then removes the subscription and does not find it', function (done) {
 
     var tameSearch = new TameSearch();
@@ -124,6 +144,28 @@ describe('tame-search integration', function () {
     expect(tameSearch.search('/test/2').length).to.be(3);
 
     expect(tameSearch.unsubscribe('/test/*', {filter: {ref: 1}})).to.be(1);
+
+    expect(tameSearch.search('/test/2').length).to.be(2);
+
+    done();
+
+  });
+
+  it('adds and finds a subscription with a filter, then removes the subscription and does not find it, with returnRemoved:true', function (done) {
+
+    var tameSearch = new TameSearch();
+
+    tameSearch.subscribe('/test/*', {ref: 1});
+
+    tameSearch.subscribe('/test/*', {ref: 2});
+
+    tameSearch.subscribe('/test/*', {ref: 3});
+
+    expect(tameSearch.search('/test/2', {filter: {ref: 3}}).length).to.be(1);
+
+    expect(tameSearch.search('/test/2').length).to.be(3);
+
+    expect(tameSearch.unsubscribe('/test/*', {filter: {ref: 1}, returnRemoved:true})).to.eql([ { ref: 1 } ]);
 
     expect(tameSearch.search('/test/2').length).to.be(2);
 
@@ -155,6 +197,62 @@ describe('tame-search integration', function () {
 
     done();
 
+  });
+
+  it('tests the unsubscribeAll method', function (done) {
+
+    var tameSearch = new TameSearch();
+
+    tameSearch.subscribe('/test/*', {ref: 1, topLevelRef:2});
+
+    tameSearch.subscribe('/test/*', {ref: 2, topLevelRef:1});
+
+    tameSearch.subscribe('/test/*', {ref: 3, topLevelRef:2});
+
+    tameSearch.subscribe('/test/*/*', {ref: 4, topLevelRef:1});
+
+    expect(tameSearch.search('/test/2', {filter: {topLevelRef: 2}}).length).to.be(2);
+
+    expect(tameSearch.unsubscribeAll({filter: {topLevelRef:2}})).to.be(2);
+
+    expect(tameSearch.search('/test/2', {filter: {topLevelRef: 2}}).length).to.be(0);
+
+    expect(tameSearch.search('/test/2', {filter: {topLevelRef: 1}}).length).to.be(1);
+
+    expect(tameSearch.search('/test/2/1', {filter: {topLevelRef: 1}}).length).to.be(1);
+
+    expect(tameSearch.unsubscribeAll({filter: {topLevelRef:1}, returnRemoved:true})).to.eql([{ref: 2, topLevelRef:1}, {ref: 4, topLevelRef:1}]);
+
+    expect(tameSearch.search('/test/2', {filter: {topLevelRef: 1}}).length).to.be(0);
+
+    expect(tameSearch.search('/test/2/1', {filter: {topLevelRef: 1}}).length).to.be(0);
+
+    done();
+  });
+
+  it('tests the searchAll method', function (done) {
+
+    var tameSearch = new TameSearch();
+
+    tameSearch.subscribe('/test/*', {ref: 1, topLevelRef:2});
+
+    tameSearch.subscribe('/test/*', {ref: 2, topLevelRef:1});
+
+    tameSearch.subscribe('/test/*', {ref: 3, topLevelRef:2});
+
+    tameSearch.subscribe('/test/*/*', {ref: 4, topLevelRef:1});
+
+    tameSearch.subscribe('/blah/*/*', {ref: 5, topLevelRef:1});
+
+    tameSearch.subscribe('/etc/*/*', {ref: 6, topLevelRef:2});
+
+    tameSearch.subscribe('/etc/*/*', {ref: 7, topLevelRef:2});
+
+    expect(tameSearch.searchAll({filter: {topLevelRef: 2}}).length).to.be(4);
+
+    expect(tameSearch.searchAll({filter: {topLevelRef: 1}}).length).to.be(3);
+
+    done();
   });
 
   it('test subscription validation', function (done) {
