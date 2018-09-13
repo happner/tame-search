@@ -5,10 +5,10 @@ var util = require('./__fixtures/util');
 
 describe('tame-search performance', function () {
 
-  var SUBSCRIPTION_COUNT = 10000;
+  var SUBSCRIPTION_COUNT = 100000;
   var SEARCH_COUNT = 100000;
 
-  this.timeout(SUBSCRIPTION_COUNT * 10);
+  this.timeout(SUBSCRIPTION_COUNT * 100);
 
   function verifyResults(searchResults, randomPaths){
 
@@ -37,7 +37,7 @@ describe('tame-search performance', function () {
     var randomPaths = random.randomPaths({count:SUBSCRIPTION_COUNT});
 
     randomPaths.forEach(function(path){
-      
+
       var possibleSubscriptions = util.getWildcardPermutations(path);
 
       var subscriptionPath = possibleSubscriptions[random.integer(0, possibleSubscriptions.length - 1)];
@@ -59,8 +59,12 @@ describe('tame-search performance', function () {
 
     var startedSearching = Date.now();
 
-    randomPaths.forEach(function(path){
+    var searchedCount = 0;
 
+    randomPaths.forEach(function(path){
+      searchedCount++;
+      //if (searchedCount % 10000 == 0)
+      //console.log('searched:::', searchedCount);
       searchResults[path] = tameSearch.search(path).length;
     });
 

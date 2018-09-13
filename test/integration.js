@@ -9,7 +9,7 @@ describe('tame-search integration', function () {
 
     tameSearch.subscribe('/test/1', {test: 'data'});
 
-    expect(tameSearch.subscriptions[2]['/test/1'][0]).to.eql({
+    expect(tameSearch.subscriptionsExplicit['/test/1'][0]).to.eql({
       test: 'data'
     });
 
