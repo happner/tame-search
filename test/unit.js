@@ -101,4 +101,33 @@ describe('tame-search unit', function () {
     expect(tameSearch.getAllTopics().sort()).to.eql(['/my/test/*/*', '/my/test/path/*']);
     done();
   });
+
+  it('tests the search getSubscriptionsByTopic update function', function(done){
+    var tameSearch = new TameSearch({permutationCache: 1000});
+
+    tameSearch.subscribe('/my/test/path/*', {test:1, custom:0});
+    tameSearch.subscribe('/my/test/path/*', {test:2, custom:0});
+    tameSearch.subscribe('/my/test/path/*', {test:3, custom:0});
+
+    expect(tameSearch.getSubscriptionsByTopic('/my/test/path/*', {filter:{test:1}})).to.eql([{test:1, custom:0}]);
+    done();
+  });
+
+  it('tests the search subscriptions we are able to update some data', function(done){
+    var tameSearch = new TameSearch({permutationCache: 1000});
+
+    tameSearch.subscribe('/my/test/path/*', {test:1, custom:0});
+    tameSearch.subscribe('/my/test/path/*', {test:2, custom:0});
+    tameSearch.subscribe('/my/test/path/*', {test:3, custom:0});
+
+    var subscription = tameSearch.getSubscriptionsByTopic('/my/test/path/*', {filter:{test:1}})[0];
+
+    subscription.custom++;
+    subscription.custom++;
+
+    var modified = tameSearch.getSubscriptionsByTopic('/my/test/path/*', {filter:{test:1}})[0];
+
+    expect(modified.custom).to.be(2);
+    done();
+  });
 });
