@@ -114,6 +114,7 @@ describe('tame-search unit', function () {
   });
 
   it('tests the search subscriptions we are able to update some data', function(done){
+
     var tameSearch = new TameSearch({permutationCache: 1000});
 
     tameSearch.subscribe('/my/test/path/*', {test:1, custom:0});

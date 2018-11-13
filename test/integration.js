@@ -428,4 +428,90 @@ describe('tame-search integration', function () {
 
     done();
   });
+
+  it('tests variable depth subscribes and unsubscribes, default depth', function(){
+    var tameSearch = TameSearch.create();
+
+    tameSearch.subscribe('/test/1/**', {test:'data'});
+
+    expect(tameSearch.search('/test/1/2/3')).to.eql([{test:'data'}]);
+    expect(tameSearch.search('/test/1/2/3/4')).to.eql([{test:'data'}]);
+    expect(tameSearch.search('/test/1/2/3/4/5')).to.eql([{test:'data'}]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6')).to.eql([{test:'data'}]);
+    expect(tameSearch.search('/test/1')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6/7')).to.eql([]);
+
+    tameSearch.unsubscribe('/test/1/**');
+
+    expect(tameSearch.search('/test/1/2/3')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6')).to.eql([]);
+    expect(tameSearch.search('/test/1')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6/7')).to.eql([]);
+
+    tameSearch.subscribe('/test/1/**', {test:1});
+    tameSearch.subscribe('/test/1/**', {test:2});
+
+    expect(tameSearch.search('/test/1/2/3')).to.eql([{test:1}, {test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4')).to.eql([{test:1}, {test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4/5')).to.eql([{test:1}, {test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6')).to.eql([{test:1}, {test:2}]);
+    expect(tameSearch.search('/test/1')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6/7')).to.eql([]);
+
+    tameSearch.unsubscribe('/test/1/**', {filter:{test:1}});
+
+    expect(tameSearch.search('/test/1/2/3')).to.eql([{test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4')).to.eql([{test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4/5')).to.eql([{test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6')).to.eql([{test:2}]);
+    expect(tameSearch.search('/test/1')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6/7')).to.eql([]);
+
+  });
+
+  it('tests variable depth subscribes and unsubscribes, specified depth', function(){
+    var tameSearch = TameSearch.create();
+
+    tameSearch.subscribe('/test/1/**', {test:'data'}, {depth:6});
+
+    expect(tameSearch.search('/test/1/2/3')).to.eql([{test:'data'}]);
+    expect(tameSearch.search('/test/1/2/3/4')).to.eql([{test:'data'}]);
+    expect(tameSearch.search('/test/1/2/3/4/5')).to.eql([{test:'data'}]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6')).to.eql([{test:'data'}]);
+    expect(tameSearch.search('/test/1')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6/7')).to.eql([{test:'data'}]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6/7/8')).to.eql([]);
+
+    tameSearch.unsubscribe('/test/1/**', {depth:6});
+
+    expect(tameSearch.search('/test/1/2/3')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6')).to.eql([]);
+    expect(tameSearch.search('/test/1')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6/7')).to.eql([]);
+
+    tameSearch.subscribe('/test/1/**', {test:1}, {depth:6});
+    tameSearch.subscribe('/test/1/**', {test:2}, {depth:6});
+
+    expect(tameSearch.search('/test/1/2/3')).to.eql([{test:1}, {test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4')).to.eql([{test:1}, {test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4/5')).to.eql([{test:1}, {test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6')).to.eql([{test:1}, {test:2}]);
+    expect(tameSearch.search('/test/1')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6/7')).to.eql([{test:1}, {test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6/7/8')).to.eql([]);
+
+    tameSearch.unsubscribe('/test/1/**', {filter:{test:1}, depth:6});
+
+    expect(tameSearch.search('/test/1/2/3')).to.eql([{test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4')).to.eql([{test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4/5')).to.eql([{test:2}]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6')).to.eql([{test:2}]);
+    expect(tameSearch.search('/test/1')).to.eql([]);
+    expect(tameSearch.search('/test/1/2/3/4/5/6/7')).to.eql([{test:2}]);
+
+  });
 });

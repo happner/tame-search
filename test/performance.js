@@ -5,8 +5,8 @@ var util = require('./__fixtures/util');
 
 describe('tame-search performance', function () {
 
-  var SUBSCRIPTION_COUNT = 100000;
-  var SEARCH_COUNT = 100000;
+  var SUBSCRIPTION_COUNT = 10000;
+  var SEARCH_COUNT = 1000000;
 
   this.timeout(SUBSCRIPTION_COUNT * 100);
 
