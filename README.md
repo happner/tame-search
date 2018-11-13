@@ -171,6 +171,57 @@ tameSearch.unsubscribe('/test/*', {filter: {ref: 1}, returnRemoved:true});
 //instead of 1
 ```
 
+__variable depth trailing wildcards:__
+*if a trailing wildcard is a double (glob style) the subscription will be for made for further levels of the topic up to a specific depth*
+```javascript
+
+var tameSearch = TameSearch.create({defaultVariableDepth:5});//defaultVariableDepth default is 5
+
+tameSearch.subscribe('/test/1/**', {test:'data'}, {depth:6});
+
+//is the same as:
+
+tameSearch.subscribe('/test/1/*', {test:'data'});
+tameSearch.subscribe('/test/1/*/*', {test:'data'});
+tameSearch.subscribe('/test/1/*/*/*', {test:'data'});
+tameSearch.subscribe('/test/1/*/*/*/*', {test:'data'});
+tameSearch.subscribe('/test/1/*/*/*/*/*', {test:'data'});
+tameSearch.subscribe('/test/1/*/*/*/*/*/*', {test:'data'});
+
+//and
+
+tameSearch.subscribe('/test/1/**', {test:'data'});
+
+//is the same as:
+
+tameSearch.subscribe('/test/1/*', {test:'data'});
+tameSearch.subscribe('/test/1/*/*', {test:'data'});
+tameSearch.subscribe('/test/1/*/*/*', {test:'data'});
+tameSearch.subscribe('/test/1/*/*/*/*', {test:'data'});
+tameSearch.subscribe('/test/1/*/*/*/*/*', {test:'data'});
+
+// you unsubscribe using almost the same syntax
+
+tameSearch.unsubscribe('/test/1/*', {depth:6});
+
+//is the same as:
+
+tameSearch.unsubscribe('/test/1/*');
+tameSearch.unsubscribe('/test/1/*/*');
+tameSearch.unsubscribe('/test/1/*/*/*');
+tameSearch.unsubscribe('/test/1/*/*/*/*');
+tameSearch.unsubscribe('/test/1/*/*/*/*/*');
+tameSearch.unsubscribe('/test/1/*/*/*/*/*/*');
+
+// you can use a filter in the unsubscribe to ensure only a specific of items is unsubscribed
+
+tameSearch.subscribe('/test/1/**', {test:'data', key:1});
+tameSearch.subscribe('/test/1/**', {test:'data', key:2});
+
+tameSearch.unsubscribe('/test/1/**', {filter:{key:1}});//will only subscribe all variable depth items with a key:1
+
+```
+
 __unsubscribe from all paths:__
 *you can unsubscribe from all paths, using a filter*
 ```javascript
