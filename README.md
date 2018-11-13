@@ -177,7 +177,8 @@ __variable depth trailing wildcards:__
 
 var tameSearch = TameSearch.create({defaultVariableDepth:5});//defaultVariableDepth default is 5
 
-tameSearch.subscribe('/test/1/**', {test:'data'}, {depth:6});
+tameSearch.subscribe('/test/1/**', {test:'data'}, {depth:6}); //NB: will only work for a trailing wildcard (last 2 characters
+                                                              // in the topic) - ie: /this/is/a/**/bad/path 
 
 //is the same as:
 
