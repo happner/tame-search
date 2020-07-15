@@ -1,7 +1,7 @@
 {
   "name": "tame-search",
   "description": "strict wildcard indexing and searching",
-  "version": "1.4.1",
+  "version": "2.0.0",
   "main": "./lib/index",
   "scripts": {
     "test": "mocha test/integration test/unit",
@@ -30,7 +30,8 @@
     "istanbul": "0.4.1",
     "mocha": "3.4.2",
     "request": "2.67.0",
-    "shortid": "^2.2.8"
+    "shortid": "^2.2.8",
+    "uuid": "^8.2.0"
   },
   "readmeFilename": "README.md"
 }
